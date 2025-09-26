@@ -1,0 +1,17 @@
+{% extends 'noticias/base.html' %}
+{% block contenido %}
+<h2>Últimas Noticias</h2>
+
+{% for noticia in noticias %}
+<article>
+    <h3>{{ noticia.titulo }}</h3>
+    <p>{{ noticia.contenido|slice:":200" }}{% if noticia.contenido|length > 200 %}...{% endif %}</p>
+    <p>Categoría: {{ noticia.categoria.nombre }}</p>
+    <a href="{% url 'detalle_noticia' noticia.id %}">Leer más</a>
+    <hr>
+</article>
+{% empty %}
+<p>No hay noticias aún.</p>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,42 @@
+# Entornos virtuales
+env/
+venv/
+ENV/
+.venv/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.pkl.gz
+*.egg-info/
+*.egg
+
+# Base de datos SQLite
+db.sqlite3
+
+# Logs y archivos temporales
+*.log
+*.pot
+*.pyc
+*.so
+*.tmp
+*.swp
+*.swo
+
+# Archivos estáticos generados (collectstatic)
+staticfiles/
+media/
+
+# Configuración sensible
+.env
+
+# Archivos de IDEs
+.vscode/
+.idea/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

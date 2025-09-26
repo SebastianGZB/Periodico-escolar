@@ -1,0 +1,12 @@
+{% extends 'noticias/base.html' %}
+{% block contenido %}
+<h2>Publicar Noticia</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {{ form.as_p }}
+  <button type="submit">Publicar</button>
+  <a href="{% url 'inicio' %}">Cancelar</a>
+</form>
+{% endblock %}

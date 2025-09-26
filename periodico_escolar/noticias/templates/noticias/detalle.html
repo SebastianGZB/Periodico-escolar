@@ -1,0 +1,82 @@
+{% extends 'noticias/base.html' %}
+{% load tz %} 
+
+{% block contenido %}
+<h2>{{ noticia.titulo }}</h2>
+
+<p><strong>Publicado:</strong> {{ noticia.fecha|date:"d/m/Y H:i" }}</p>
+
+{% if fecha_edicion %}
+  <p><strong>Última edición:</strong> {{ fecha_edicion|localtime|date:"d/m/Y H:i" }}</p>
+{% else %}
+  <p><strong>Última edición:</strong> No ha sido editada.</p>
+{% endif %}
+
+{% if ultima_edicion %}
+  <p><strong>Edición del mes:</strong> {{ ultima_edicion.titulo }}</p>
+{% endif %}
+
+<p>{{ noticia.contenido }}</p>
+<p>Categoría: {{ noticia.categoria.nombre }}</p>
+
+{# Imagen, si existe #}
+{% if noticia.imagen %}
+  <p>
+    <img src="{{ noticia.imagen.url }}" alt="Imagen de {{ noticia.titulo }}" style="max-width: 100%; height: auto;">
+  </p>
+{% endif %}
+
+{# Acciones (autor o editor) #}
+{% if user.is_authenticated and user == noticia.autor or user.is_authenticated and user.is_editor %}
+  <p><a href="{% url 'editar_noticia' noticia.id %}">Editar Noticia</a></p>
+  <form method="post" action="{% url 'eliminar_noticia' noticia.id %}" onsubmit="return confirm('¿Eliminar esta noticia?');">
+    {% csrf_token %}
+    <button type="submit" style="color:#b00;">Eliminar</button>
+  </form>
+{% endif %}
+
+<hr>
+<h3>Reacciones</h3>
+<p>👍 Likes: {{ likes }} | 👎 Dislikes: {{ dislikes }}</p>
+
+{% if reaccion_form %}
+  <h4>Reaccionar</h4>
+  <form method="post">
+    {% csrf_token %}
+    {{ reaccion_form.as_p }}
+    <button type="submit" name="reaccion_submit">Enviar</button>
+  </form>
+{% else %}
+  <p>Debes <a href="{% url 'login' %}">iniciar sesión</a> para reaccionar.</p>
+{% endif %}
+
+<hr>
+<h3>Comentarios</h3>
+
+{% if comentarios %}
+  <ul>
+    {% for comentario in comentarios %}
+      <li>
+        <strong>{{ comentario.autor.username }}:</strong> 
+        {{ comentario.contenido }} 
+        <em>({{ comentario.fecha|date:"d/m/Y H:i" }})</em>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No hay comentarios aún.</p>
+{% endif %}
+
+{% if comentario_form %}
+  <h4>Agregar Comentario</h4>
+  <form method="post">
+    {% csrf_token %}
+    {{ comentario_form.as_p }}
+    <button type="submit" name="comentario_submit">Comentar</button>
+  </form>
+{% else %}
+  <p>Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
+{% endif %}
+
+<a href="{% url 'inicio' %}">← Volver al inicio</a>
+{% endblock %}

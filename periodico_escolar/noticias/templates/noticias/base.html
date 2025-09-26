@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Periódico Escolar{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+  <script defer src="{% static 'js/script.js' %}"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+  <!-- Fondo animado -->
+  <div class="bg"></div>
+  <div class="bg bg2"></div>
+  <div class="bg bg3"></div>
+
+  <header class="site-header">
+    <h1>Periódico Escolar</h1>
+    <nav>
+      <a href="{% url 'inicio' %}">Inicio</a>
+      {% if user.is_authenticated %}
+        <span>Hola, {{ user.username }}</span> |
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="linklike">Cerrar sesión</button>
+        </form>
+        {% if user.is_redactor or user.is_editor %}
+          | <a href="{% url 'crear_noticia' %}">Crear Noticia</a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'login' %}">Iniciar sesión</a> |
+        <a href="{% url 'signup' %}">Registrarse</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% if messages %}
+    <ul class="mensajes">
+      {% for message in messages %}
+        <li class="msg {{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <main class="page-content">
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Periódico Escolar</p>
+  </footer>
+
+</body>
+</html>

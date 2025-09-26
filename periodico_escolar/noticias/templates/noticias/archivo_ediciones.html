@@ -1,0 +1,15 @@
+{% extends 'noticias/base.html' %}
+{% block contenido %}
+<h2>Archivo Histórico de Ediciones</h2>
+<ul>
+    {% for edicion in ediciones %}
+    <li>
+        <a href="{% url 'detalle_edicion' edicion.id %}">
+            {{ edicion.titulo }} - {{ edicion.fecha }}
+        </a>
+    </li>
+    {% empty %}
+    <li>No hay ediciones publicadas.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

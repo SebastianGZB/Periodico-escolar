@@ -1,0 +1,13 @@
+{% extends 'noticias/base.html' %}
+{% block contenido %}
+<h2>{{ edicion.titulo }} ({{ edicion.fecha }})</h2>
+<h3>Noticias de esta edición:</h3>
+<ul>
+    {% for noticia in noticias %}
+    <li><a href="{% url 'detalle_noticia' noticia.id %}">{{ noticia.titulo }}</a></li>
+    {% empty %}
+    <li>No hay noticias en esta edición.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'archivo_ediciones' %}">Volver al Archivo</a>
+{% endblock %}

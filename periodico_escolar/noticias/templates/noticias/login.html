@@ -1,0 +1,40 @@
+{% extends 'noticias/base.html' %}
+{% block contenido %}
+<h2>Iniciar sesión</h2>
+
+{# Muestra errores del form (credenciales incorrectas, etc.) #}
+{% if form.non_field_errors %}
+  <ul style="color:#b00;">
+    {% for err in form.non_field_errors %}
+      <li>{{ err }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+  <p>
+    <label for="id_username">Usuario</label><br>
+    {{ form.username }}
+    {% if form.username.errors %}
+      <span style="color:#b00;">{{ form.username.errors.0 }}</span>
+    {% endif %}
+  </p>
+  <p>
+    <label for="id_password">Contraseña</label><br>
+    {{ form.password }}
+    {% if form.password.errors %}
+      <span style="color:#b00;">{{ form.password.errors.0 }}</span>
+    {% endif %}
+  </p>
+
+  {# Soporta redirect a "next" si venías de una página protegida #}
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <button type="submit">Entrar</button>
+</form>
+
+<p>¿No tienes cuenta? <a href="{% url 'signup' %}">Regístrate</a></p>
+{% endblock %}

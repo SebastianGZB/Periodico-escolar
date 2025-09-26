@@ -1,0 +1,10 @@
+{% extends 'noticias/base.html' %}
+{% block contenido %}
+<h2>Eliminar Noticia</h2>
+<p>¿Seguro que deseas eliminar <strong>{{ noticia.titulo }}</strong>?</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" style="color:#b00;">Sí, eliminar</button>
+  <a href="{% url 'detalle_noticia' noticia.id %}">Cancelar</a>
+</form>
+{% endblock %}
