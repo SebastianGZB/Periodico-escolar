@@ -1,0 +1,55 @@
+{% extends 'noticias/base.html' %}
+
+{% block contenido %}
+<h1>Noticias de {{ categoria.nombre }}</h1>
+
+<!-- Barra de categorías (usa la variable 'categorias' pasada por la vista) -->
+{% if categorias %}
+  <ul style="list-style:none; padding:0; display:flex; gap:10px; flex-wrap:wrap; margin: 0 0 16px 0;">
+    {% for c in categorias %}
+      <li>
+        <a href="{% url 'noticias_por_categoria' c.id %}"
+           style="display:inline-block; padding:6px 10px; background:#eaeaea; border-radius:8px; text-decoration:none; color:#333; font-weight:bold;">
+          {{ c.nombre }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% for noticia in noticias %}
+  <article style="margin-bottom: 30px; display: grid; grid-template-columns: 180px 1fr; gap: 16px; align-items: start;">
+
+    {% if noticia.imagen %}
+      <a href="{% url 'detalle_noticia' noticia.id %}">
+        <img src="{{ noticia.imagen.url }}"
+             alt="Imagen de {{ noticia.titulo }}"
+             style="width: 180px; height: 120px; object-fit: cover; border-radius: 8px;"
+             loading="lazy">
+      </a>
+    {% else %}
+      <div style="width: 180px; height: 120px; border-radius: 8px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #777; font-size: 12px;">
+        Sin imagen
+      </div>
+    {% endif %}
+
+    <div>
+      <h3 style="margin: 0 0 6px 0;">{{ noticia.titulo }}</h3>
+      <p style="margin: 0 0 8px 0;">
+        {{ noticia.contenido|slice:":200" }}{% if noticia.contenido|length > 200 %}...{% endif %}
+      </p>
+      <p style="margin: 0 0 8px 0; color:#555;">
+        <strong>Categoría:</strong>
+        <a href="{% url 'noticias_por_categoria' noticia.categoria.id %}">{{ noticia.categoria.nombre }}</a>
+      </p>
+      <a href="{% url 'detalle_noticia' noticia.id %}"
+         style="color: #007bff; text-decoration: none; font-weight: bold;">Leer más →</a>
+    </div>
+  </article>
+  <hr>
+{% empty %}
+  <p>No hay noticias en esta categoría todavía.</p>
+{% endfor %}
+
+<p><a href="{% url 'inicio' %}">← Volver al inicio</a></p>
+{% endblock %}

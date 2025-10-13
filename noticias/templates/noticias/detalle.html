@@ -1,0 +1,110 @@
+{% extends 'noticias/base.html' %}
+{% load tz %}
+
+{% block contenido %}
+<h2 style="margin-bottom: 10px;">{{ noticia.titulo }}</h2>
+
+<!-- 🔹 Barra de información compacta con nombres -->
+<p style="
+  background: #111;
+  color: #ccc;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 15px;
+">
+  🕓 <strong>Publicado:</strong> {{ noticia.fecha|date:"d/m/Y H:i" }} |
+  📂 <strong>Categoría:</strong> {{ noticia.categoria.nombre }}
+  {% if fecha_edicion %}
+    | ✏️ <strong>Última edición:</strong> {{ fecha_edicion|localtime|date:"d/m/Y H:i" }}
+  {% endif %}
+  {% if ultima_edicion %}
+    | 🗞️ <strong>Edición del mes:</strong> {{ ultima_edicion.titulo }}
+  {% endif %}
+</p>
+
+
+<!-- Contenido principal -->
+<div style="color:#ddd; font-size:1.05rem; margin-top:10px;">
+  {{ noticia.contenido }}
+</div>
+
+<!-- Imagen -->
+{% if noticia.imagen %}
+  <div style="margin:15px 0;">
+    <img src="{{ noticia.imagen.url }}" alt="Imagen de {{ noticia.titulo }}"
+         style="max-width: 100%; border-radius: 10px; box-shadow: 0 0 10px rgba(255,255,255,0.2);">
+  </div>
+{% endif %}
+
+{# Acciones (autor o editor) #}
+{% if user.is_authenticated %}
+  {% if user == noticia.autor or user.is_editor %}
+    <div style="margin-top:15px;">
+      <a href="{% url 'editar_noticia' noticia.id %}" class="btn">✏️ Editar Noticia</a>
+      <form method="post" action="{% url 'eliminar_noticia' noticia.id %}"
+            style="display:inline;"
+            onsubmit="return confirm('¿Eliminar esta noticia?');">
+        {% csrf_token %}
+        <button type="submit" class="btn" style="background:#b00;">🗑️ Eliminar</button>
+      </form>
+    </div>
+  {% endif %}
+{% endif %}
+
+
+<hr>
+
+<!-- Reacciones -->
+<section>
+  <h3>Reacciones</h3>
+  <p style="color:#ccc;">👍 Likes: {{ likes }} | 👎 Dislikes: {{ dislikes }}</p>
+
+  {% if reaccion_form %}
+    <form method="post" style="margin-top:10px;">
+      {% csrf_token %}
+      {{ reaccion_form.as_p }}
+      <button type="submit" name="reaccion_submit" class="btn">Enviar</button>
+    </form>
+  {% else %}
+    <p>Debes <a href="{% url 'login' %}">iniciar sesión</a> para reaccionar.</p>
+  {% endif %}
+</section>
+
+<hr>
+
+<!-- Comentarios -->
+<section>
+  <h3>Comentarios</h3>
+
+  {% if comentarios %}
+    <ul style="list-style:none; padding:0;">
+      {% for comentario in comentarios %}
+        <li style="background:#111; padding:8px 12px; margin-bottom:8px; border-radius:8px;">
+          <strong>{{ comentario.autor.username }}</strong>:
+          {{ comentario.contenido }}
+          <em style="color:#888;">({{ comentario.fecha|date:"d/m/Y H:i" }})</em>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No hay comentarios aún.</p>
+  {% endif %}
+
+  {% if comentario_form %}
+    <h4>Agregar Comentario</h4>
+    <form method="post" style="margin-top:10px;">
+      {% csrf_token %}
+      {{ comentario_form.as_p }}
+      <button type="submit" name="comentario_submit" class="btn">Comentar</button>
+    </form>
+  {% else %}
+    <p>Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
+  {% endif %}
+</section>
+
+<hr>
+<a href="{% url 'inicio' %}" style="color:#aaa;">← Volver al inicio</a>
+
+{% endblock %}

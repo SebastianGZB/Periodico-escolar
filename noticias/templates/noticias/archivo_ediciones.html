@@ -1,0 +1,97 @@
+{% extends 'noticias/base.html' %}
+
+{% block contenido %}
+<h1 style="color:#fff;">Archivo histórico de ediciones</h1>
+
+<!-- Buscador por fecha (modo oscuro) -->
+<section style="display:grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px;">
+  <div style="border:1px solid #333; border-radius:10px; background:#111; padding:12px;">
+    <h3 style="margin-top:0; color:#fff;">Buscar por fecha</h3>
+    <form method="get" action="{% url 'archivo_ediciones' %}">
+      <label for="fecha" style="color:#ccc;">Selecciona una fecha:</label><br>
+      <input type="date" id="fecha" name="d" value="{{ initial_value }}"
+             style="background:#222; color:#fff; border:1px solid #555; border-radius:6px; padding:4px;" />
+      <button type="submit"
+              style="margin-left:8px; background:#007bff; color:#fff; border:none; border-radius:6px; padding:4px 10px; cursor:pointer;">
+              Buscar
+      </button>
+    </form>
+
+    {% if selected_date %}
+      <p style="color:#aaa; margin-top:8px;">Resultados para: {{ selected_date|date:"d" }} de {{ selected_date|date:"F" }} de {{ selected_date|date:"Y" }}
+
+    {% endif %}
+    {% if error_fecha %}
+      <p style="color:#ff7777;">{{ error_fecha }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Resultados por día -->
+  <div style="border:1px solid #333; border-radius:10px; background:#111; padding:12px;">
+    <h3 style="margin-top:0; color:#fff;">Noticias del día</h3>
+    {% if selected_date and noticias_por_dia %}
+      {% for noticia in noticias_por_dia %}
+        <article style="margin-bottom: 20px; display:grid; grid-template-columns: 180px 1fr; gap: 16px;">
+          {% if noticia.imagen %}
+            <a href="{% url 'detalle_noticia' noticia.id %}">
+              <img src="{{ noticia.imagen.url }}" alt="Imagen de {{ noticia.titulo }}"
+                   style="width:180px; height:120px; object-fit:cover; border-radius:8px;" loading="lazy">
+            </a>
+          {% else %}
+            <div style="width:180px; height:120px; border-radius:8px; background:#333; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:12px;">
+              Sin imagen
+            </div>
+          {% endif %}
+          <div>
+            <h4 style="margin:0 0 6px 0; color:#fff;">{{ noticia.titulo }}</h4>
+            <p style="margin:0 0 8px 0; color:#ccc;">{{ noticia.contenido|slice:":180" }}{% if noticia.contenido|length > 180 %}...{% endif %}</p>
+            <p style="margin:0 0 8px 0; color:#999;">
+              <strong>Categoría:</strong>
+              <a href="{% url 'noticias_por_categoria' noticia.categoria.id %}" style="color:#80bfff;">{{ noticia.categoria.nombre }}</a>
+            </p>
+            <a href="{% url 'detalle_noticia' noticia.id %}" style="color:#4da3ff;">Leer más →</a>
+          </div>
+        </article>
+        <hr style="border-color:#333;">
+      {% endfor %}
+    {% elif selected_date and not noticias_por_dia %}
+      <p style="color:#aaa;">No hay noticias en la fecha seleccionada.</p>
+    {% else %}
+      <p style="color:#aaa;">Selecciona una fecha para ver noticias puntuales.</p>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Ediciones (modo oscuro) -->
+{% if ediciones %}
+  <section style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px;">
+    {% for ed in ediciones %}
+      <article style="border:1px solid #333; border-radius:10px; overflow:hidden; background:#111;">
+        <a href="{% url 'detalle_edicion' ed.id %}" style="text-decoration:none; color:inherit;">
+          {% with portada=ed.noticias.all|first %}
+            {% if portada and portada.imagen %}
+              <img src="{{ portada.imagen.url }}" alt="Portada {{ ed.titulo }}"
+                   style="width:100%; height:160px; object-fit:cover;">
+            {% else %}
+              <div style="width:100%; height:160px; background:#333; display:flex; align-items:center; justify-content:center; color:#777;">
+                Sin portada
+              </div>
+            {% endif %}
+          {% endwith %}
+          <div style="padding:12px;">
+            <h3 style="margin:0 0 6px 0; color:#fff;">{{ ed.titulo }}</h3>
+            <p style="margin:0; color:#aaa;">Publicado: {{ ed.fecha|date:"F Y" }}</p>
+            <p style="margin:6px 0 0 0; color:#ccc;">
+              {{ ed.noticias.count }} noticia{{ ed.noticias.count|pluralize:"s" }}
+            </p>
+          </div>
+        </a>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <p style="color:#ccc;">No hay ediciones publicadas todavía.</p>
+{% endif %}
+
+<p style="margin-top:16px;"><a href="{% url 'inicio' %}" style="color:#4da3ff;">← Volver al inicio</a></p>
+{% endblock %}

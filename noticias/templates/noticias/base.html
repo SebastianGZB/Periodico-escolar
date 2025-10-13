@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Periódico Escolar{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+  <script defer src="{% static 'js/script.js' %}"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+  <!-- Fondo animado -->
+  <div class="bg"></div>
+  <div class="bg bg2"></div>
+  <div class="bg bg3"></div>
+
+  <header class="site-header">
+    <div style="display:flex; align-items:center; gap:15px;">
+  <h2 style="color:#fff; margin:0;">📰 Periódico Escolar</h2>
+</div>
+
+   <nav style="
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 25px;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  flex-wrap: wrap;
+  gap: 10px;
+">
+
+  <!-- Sección izquierda -->
+  <div style="display: flex; align-items: center; gap: 20px;">
+    <a href="{% url 'inicio' %}" style="color: #fff; text-decoration: none; font-weight: bold;">Inicio</a>
+    <a href="{% url 'archivo_ediciones' %}" style="color: #fff; text-decoration: none;">Archivo de Ediciones</a>
+    <a href="#" style="color: #ccc; text-decoration: none; cursor: default;">|</a>
+    {% comment %} Más enlaces fijos aquí si los necesitas {% endcomment %}
+  </div>
+
+  <!-- Sección derecha -->
+  <div style="display: flex; align-items: center; gap: 15px;">
+    {% if user.is_authenticated %}
+      <span style="color: #ccc;">👤 {{ user.username }}</span>
+
+      {% if user.is_redactor or user.is_editor %}
+        <a href="{% url 'crear_noticia' %}" 
+           style="color: #4da3ff; text-decoration: none; font-weight: bold;">
+           ➕ Crear Noticia
+        </a>
+      {% endif %}
+
+      <form method="post" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit"
+                style="background:none; border:none; color:#ff6666; cursor:pointer; font-weight:bold;">
+          Cerrar sesión ✖
+        </button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" style="color:#4da3ff; text-decoration:none;">Iniciar sesión</a>
+      <a href="{% url 'signup' %}" style="color:#4da3ff; text-decoration:none;">Registrarse</a>
+    {% endif %}
+  </div>
+</nav>
+
+
+  </header>
+
+  {% if messages %}
+    <ul class="mensajes">
+      {% for message in messages %}
+        <li class="msg {{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <main class="page-content">
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Periódico Escolar</p>
+  </footer>
+
+</body>
+</html>
