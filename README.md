@@ -52,6 +52,10 @@ El sistema incluye categorías base para mantener una estructura mínima funcion
 ### 🔸 Diagrama M.E.R.
 ![Modelo Entidad–Relación](static/img/mer.png)
 
+## CLONAR REPOSITORIO
+git clone https://github.com/SebastianGZB/Periodico-escolar.git
+
+
 ### 🐳 Despliegue con Docker
 
 🚀 Levantar el entorno de desarrollo
