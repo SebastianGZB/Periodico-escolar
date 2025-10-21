@@ -70,3 +70,10 @@ docker compose -f docker-compose.dev.yml exec web python manage.py createsuperus
 🗃️ Migraciones iniciales
 docker compose -f docker-compose.dev.yml exec web python manage.py makemigrations
 docker compose -f docker-compose.dev.yml exec web python manage.py migrate
+
+Entrar a la pagina
+
+http://127.0.0.1:8000/
+
+ADMINISTRADOR
+http://127.0.0.1:8000/admin
